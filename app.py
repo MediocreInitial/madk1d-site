@@ -190,11 +190,11 @@ def add_wall(ip: str, name: str, text: str):
 
 
 # ---------------- рендер ----------------
-def render_page() -> str:
+def render_page(static: bool = False) -> str:
     e = html.escape
     media = list_media()
     data = {"artist": ARTIST, "media": media, "clips": build_clips(media),
-            "streaming": [{"name": n, "url": u} for n, u in STREAMING]}
+            "streaming": [{"name": n, "url": u} for n, u in STREAMING], "static": static}
     parts = {
         "%%TAGLINE%%": e(TAGLINE),
         "%%BIO%%": BIO,

@@ -608,7 +608,14 @@
     if (!list.length) { wallList.append(h('li', { class: 'wall-empty', text: 'Пока пусто — напиши первым.' })); return; }
     for (const m of list.slice().reverse()) wallList.append(msgNode(m));
   }
-  fetch('/api/wall').then((r) => r.json()).then(renderWall).catch(() => renderWall([]));
+  const defaultWall = [
+    { name: 'аноним', text: 'мой самый любимый исполнитель!', ts: Math.floor(Date.now() / 1000) - 3600 },
+  ];
+  if (DATA.static) {
+    renderWall(store.get('wall', defaultWall));
+  } else {
+    fetch('/api/wall').then((r) => r.json()).then(renderWall).catch(() => renderWall([]));
+  }
 
   fText.addEventListener('input', () => { wallCount.textContent = `${fText.value.length} / 280`; });
   wallForm.addEventListener('submit', async (e) => {
@@ -618,14 +625,26 @@
     wallStatus.className = '';
     wallStatus.textContent = 'отправляю…';
     try {
-      const r = await fetch('/api/wall', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: fName.value, text: fText.value }),
-      });
-      const d = await r.json();
-      if (!d.ok) throw new Error(d.error || 'Ошибка');
+      let msg;
+      if (DATA.static) {
+        const name = fName.value.trim().slice(0, 24) || 'аноним';
+        const text = fText.value.trim().slice(0, 280);
+        if (!text) throw new Error('Сообщение пустое');
+        msg = { name, text, ts: Math.floor(Date.now() / 1000) };
+        const saved = store.get('wall', defaultWall.slice());
+        saved.push(msg);
+        store.set('wall', saved.slice(-100));
+      } else {
+        const r = await fetch('/api/wall', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: fName.value, text: fText.value }),
+        });
+        const d = await r.json();
+        if (!d.ok) throw new Error(d.error || 'Ошибка');
+        msg = d.msg;
+      }
       wallList.querySelector('.wall-empty')?.remove();
-      wallList.prepend(msgNode(d.msg, true));
+      wallList.prepend(msgNode(msg, true));
       fText.value = '';
       wallCount.textContent = '0 / 280';
       wallStatus.className = 'ok';
