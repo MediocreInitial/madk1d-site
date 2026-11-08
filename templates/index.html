@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>madk1d — фан-сайт</title>
+<meta name="description" content="Фан-сайт madk1d: музыка, клипы, фото и стена фанатов.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;800;900&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+<!-- ============ НАВИГАЦИЯ ============ -->
+<nav class="nav">
+  <a class="logo" href="#top">madk1d</a>
+  <div class="nav-links">
+    <a href="#music">Музыка</a><a href="#clips">Клипы</a><a href="#gallery">Фото</a>
+    <a href="#about">О нём</a><a href="#wall">Стена</a><a href="#links">Соцсети</a>
+  </div>
+  <button class="nav-play" id="navPlay" aria-label="Играть / пауза" title="Играть / пауза">
+    <span class="eq"><i></i><i></i><i></i></span>
+  </button>
+</nav>
+
+<!-- ============ ПЕРВЫЙ ЭКРАН ============ -->
+<header class="hero" id="top">
+  <div class="hero-bg-text" aria-hidden="true">MADK1D</div>
+  <div class="hero-glow beat" aria-hidden="true"></div>
+
+  <div class="hero-info reveal">
+    <p class="kicker">Томск → вся страна</p>
+    <h1>madk1d</h1>
+    <p class="lead">%%TAGLINE%%</p>
+    <div class="hero-cta">
+      <button class="btn btn-acc" id="heroPlay">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Слушать
+      </button>
+      <a class="btn" href="#clips">Смотреть клипы</a>
+    </div>
+  </div>
+
+  <div class="hero-photo-wrap reveal">
+    <figure class="hero-photo">
+      <img id="heroImg" alt="madk1d" hidden>
+      <div class="ph" id="heroPh"><b>M</b><span>положи фото в<br><code>media/photos/hero.jpg</code></span></div>
+    </figure>
+    <span class="sticker">sexyswag</span>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true"><div class="ticker-track">%%TICKER%%%%TICKER%%</div></div>
+
+<main>
+  <!-- ============ ПЛЕЕР ============ -->
+  <section class="section" id="music">
+    <div class="section-head reveal"><span class="num">01</span><h2>Плеер</h2><p>Визуализатор реагирует на бит — и первый экран тоже</p></div>
+
+    <div class="player reveal" id="player">
+      <div class="player-main">
+        <div class="pm-top">
+          <div class="cover-wrap">
+            <div class="vinyl" aria-hidden="true"><i></i></div>
+            <div class="cover" id="cover"><img id="coverImg" alt="" hidden><span id="coverPh">mk</span></div>
+          </div>
+          <div class="pm-meta">
+            <p class="now">сейчас играет</p>
+            <h3 id="trackTitle">—</h3>
+            <p class="muted" id="trackArtist">madk1d</p>
+          </div>
+        </div>
+
+        <canvas id="viz" aria-hidden="true"></canvas>
+
+        <div>
+          <div class="progress" id="progress" role="slider" aria-label="Перемотка">
+            <div class="progress-buf" id="progressBuf"></div>
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="times"><span id="tCur">0:00</span><span id="tDur">0:00</span></div>
+        </div>
+
+        <div class="controls">
+          <button class="ctl small" id="btnShuffle" title="Перемешать (S)" aria-label="Перемешать">
+            <svg viewBox="0 0 24 24"><path d="M10.59 9.17 5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+          </button>
+          <button class="ctl" id="btnPrev" title="Предыдущий (P)" aria-label="Предыдущий">
+            <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+          </button>
+          <button class="ctl play" id="btnPlay" title="Играть / пауза (пробел)" aria-label="Играть / пауза">
+            <svg class="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="i-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+          </button>
+          <button class="ctl" id="btnNext" title="Следующий (N)" aria-label="Следующий">
+            <svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+          </button>
+          <button class="ctl small" id="btnRepeat" title="Повтор (R)" aria-label="Повтор">
+            <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+          </button>
+          <label class="vol" title="Громкость (M — выкл. звук)">
+            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
+            <input type="range" id="volume" min="0" max="1" step="0.01" aria-label="Громкость">
+          </label>
+        </div>
+      </div>
+
+      <ol class="playlist" id="playlist"></ol>
+
+      <div class="empty" id="musicEmpty" hidden>
+        <b>Плейлист пуст</b>
+        <p>Положи треки (<code>.mp3</code>, <code>.m4a</code>, <code>.ogg</code>…) в папку <code>media/music/</code>
+           и обнови страницу. Имя файла станет названием трека, обложку можно положить в <code>media/covers/</code> с тем же именем.</p>
+        <div class="empty-links" id="streamLinks"></div>
+      </div>
+    </div>
+    <p class="hotkeys">Пробел — пауза · ← → — перемотка · N / P — трек · M — звук · S — шаффл · R — повтор</p>
+  </section>
+
+  <!-- ============ КЛИПЫ ============ -->
+  <section class="section" id="clips">
+    <div class="section-head reveal"><span class="num">02</span><h2>Фрагменты из клипов</h2><p>Нажми, чтобы смотреть со звуком</p></div>
+    <div class="clips" id="clipGrid"></div>
+  </section>
+
+  <!-- ============ ФОТО ============ -->
+  <section class="section" id="gallery">
+    <div class="section-head reveal"><span class="num">03</span><h2>Фото</h2><p>Клик — открыть, стрелки — листать</p></div>
+    <div class="gallery" id="galleryGrid"></div>
+  </section>
+
+  <!-- ============ О НЁМ ============ -->
+  <section class="section" id="about">
+    <div class="section-head reveal"><span class="num">04</span><h2>О нём</h2></div>
+    <div class="about">
+      <p class="bio reveal">%%BIO%%</p>
+      <ol class="facts reveal reveal-kids">%%FACTS%%</ol>
+    </div>
+    <h3 class="sub reveal">Дискография</h3>
+    <div class="disco">%%RELEASES%%</div>
+    <div class="singles reveal reveal-kids">%%SINGLES%%</div>
+  </section>
+
+  <!-- ============ СТЕНА ФАНАТОВ ============ -->
+  <section class="section" id="wall">
+    <div class="section-head reveal"><span class="num">05</span><h2>Стена фанатов</h2><p>Оставь пару слов — сообщения видят все</p></div>
+    <div class="wall">
+      <form class="wall-form reveal" id="wallForm" autocomplete="off">
+        <input name="name" maxlength="24" placeholder="Ник (необязательно)">
+        <textarea name="text" maxlength="280" rows="4" placeholder="Любимый трек, строчка или просто привет" required></textarea>
+        <div class="wall-meta"><span id="wallStatus"></span><span id="wallCount">0 / 280</span></div>
+        <button class="btn btn-acc" type="submit">Отправить</button>
+      </form>
+      <ul class="wall-list" id="wallList"></ul>
+    </div>
+  </section>
+
+  <!-- ============ СОЦСЕТИ ============ -->
+  <section class="section" id="links">
+    <div class="section-head reveal"><span class="num">06</span><h2>Соцсети</h2></div>
+    <ul class="links reveal reveal-kids">%%SOCIALS%%</ul>
+  </section>
+</main>
+
+<footer class="footer">
+  <span class="logo">madk1d</span>
+  <p>Неофициальный фан-сайт. Все права на музыку, видео и изображения принадлежат их владельцам.</p>
+</footer>
+
+<!-- мини-плеер -->
+<div class="mini hide" id="mini">
+  <div class="mini-cover" id="miniCover">mk</div>
+  <div class="mini-meta"><b id="miniTitle">—</b><span id="miniArtist">madk1d</span></div>
+  <button class="ctl" id="miniPrev" aria-label="Предыдущий"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
+  <button class="ctl play" id="miniPlay" aria-label="Играть / пауза">
+    <svg class="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    <svg class="i-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+  </button>
+  <button class="ctl" id="miniNext" aria-label="Следующий"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+  <div class="mini-progress"><i id="miniFill"></i></div>
+</div>
+
+<!-- модальное окно: видео и фото -->
+<div class="modal" id="modal" hidden>
+  <button class="modal-close" id="modalClose" aria-label="Закрыть">×</button>
+  <button class="modal-nav modal-prev" id="modalPrev" aria-label="Назад">←</button>
+  <div class="modal-body" id="modalBody"></div>
+  <button class="modal-nav modal-next" id="modalNext" aria-label="Вперёд">→</button>
+</div>
+
+<script id="data" type="application/json">%%DATA%%</script>
+<script src="/static/app.js"></script>
+</body>
+</html>
